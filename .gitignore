@@ -1,0 +1,22 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Vector store data (regenerated per run)
+data/vector_store/*
+!data/vector_store/.gitkeep
+
+# Exported reports
+data/exports/*
+!data/exports/.gitkeep
+
+# OS / editor
+.DS_Store
+.vscode/settings.json

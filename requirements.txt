@@ -1,0 +1,25 @@
+# --- Core orchestration ---
+langgraph==0.2.60
+langchain==0.3.13
+langchain-core==0.3.28
+langchain-groq==0.2.1
+langchain-community==0.3.13
+
+# --- LLM provider ---
+groq==0.13.1
+
+# --- Vector store / RAG (fully local, no extra API key needed) ---
+chromadb==0.5.23
+sentence-transformers==3.3.1
+
+# --- Tools ---
+tavily-python==0.5.0
+yfinance==0.2.50
+
+# --- UI ---
+streamlit==1.41.1
+
+# --- Utilities ---
+python-dotenv==1.0.1
+pydantic==2.10.4
+fpdf2==2.8.2

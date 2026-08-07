@@ -1,0 +1,767 @@
+/* Meridian - Streamlit visual system */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700;800&display=swap");
+
+:root {
+    --paper: #f8f4ec;
+    --surface: #fffefa;
+    --surface-2: #f3eee6;
+    --ink: #111a33;
+    --body: #3f4656;
+    --muted: #747985;
+    --line: #e2d9cd;
+    --copper: #ad6434;
+    --copper-soft: #f4e4d7;
+    --sage: #2f7a53;
+    --sage-soft: #eaf3ec;
+    --shadow: 0 1px 0 rgba(255, 255, 255, 0.78) inset,
+        0 0 0 1px rgba(107, 78, 49, 0.025),
+        0 8px 18px rgba(57, 42, 28, 0.045),
+        0 20px 42px rgba(57, 42, 28, 0.035);
+    --shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.88) inset,
+        0 0 0 1px rgba(173, 100, 52, 0.10),
+        0 12px 24px rgba(57, 42, 28, 0.065),
+        0 26px 52px rgba(57, 42, 28, 0.045);
+    --shadow-field: 0 1px 0 rgba(255, 255, 255, 0.85) inset,
+        0 0 0 1px rgba(107, 78, 49, 0.02),
+        0 3px 8px rgba(57, 42, 28, 0.035),
+        0 10px 18px rgba(57, 42, 28, 0.028);
+    --shadow-field-focus: 0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 0 0 3px rgba(173, 100, 52, 0.14),
+        0 6px 14px rgba(57, 42, 28, 0.05);
+    --shadow-button: 0 1px 2px rgba(57, 42, 28, 0.14),
+        0 3px 7px rgba(57, 42, 28, 0.1);
+    --shadow-button-hover: 0 2px 4px rgba(57, 42, 28, 0.16),
+        0 6px 12px rgba(57, 42, 28, 0.13);
+    --display: "Fraunces", Georgia, serif;
+    --sans: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+.stApp {
+    background:
+        radial-gradient(circle at 18% 8%, rgba(173, 100, 52, 0.08), transparent 28%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(248, 244, 236, 0.96)),
+        var(--paper);
+}
+
+.block-container {
+    max-width: 1120px;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+#MainMenu,
+footer,
+[data-testid="stHeader"] {
+    visibility: hidden;
+}
+
+.stApp,
+.stApp p,
+.stApp li,
+.stApp label,
+[data-testid="stMarkdownContainer"] {
+    font-family: var(--sans);
+    color: var(--body);
+}
+
+/* ============================= SIDEBAR ============================= */
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, rgba(255, 254, 250, 0.98), rgba(248, 244, 236, 0.98));
+    border-right: 1px solid var(--line);
+    width: 280px !important;
+    min-width: 280px !important;
+}
+
+[data-testid="stSidebar"] > div:first-child {
+    padding: 1.7rem 1.25rem 1.4rem;
+}
+
+.mrd-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.9rem;
+}
+
+.mrd-mark-side {
+    width: 34px;
+    height: 34px;
+    color: var(--copper);
+    flex: 0 0 auto;
+}
+
+.mrd-wordmark-side {
+    font-family: var(--display);
+    font-size: 1.38rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
+}
+
+.mrd-brand-sub-side {
+    margin-top: 0.28rem;
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: var(--copper);
+    text-transform: uppercase;
+}
+
+.mrd-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.mrd-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.62rem 0.75rem;
+    border-radius: 7px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mrd-nav-item svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+}
+
+.mrd-nav-item:hover {
+    background: rgba(173, 100, 52, 0.07);
+    color: var(--ink);
+}
+
+.mrd-nav-item.active {
+    background: var(--copper-soft);
+    color: var(--copper);
+    font-weight: 700;
+}
+
+.mrd-nav-divider {
+    height: 1px;
+    background: var(--line);
+    margin: 1rem 0;
+}
+
+/* ============================= HERO ============================= */
+
+.mrd-hero-wrap {
+    position: relative;
+    padding-bottom: 0.5rem;
+    padding-top: 0.4rem;
+    overflow: hidden;
+}
+
+.mrd-hero {
+    max-width: 640px;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.mrd-eyebrow-pill {
+    display: inline-block;
+    padding: 0.42rem 0.85rem;
+    border: 1px solid rgba(173, 100, 52, 0.3);
+    border-radius: 999px;
+    color: var(--copper);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 1.1rem;
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.mrd-hero h1 {
+    margin: 0.18rem 0 0.45rem;
+    font-family: var(--display);
+    font-size: clamp(2.5rem, 6vw, 4.65rem);
+    line-height: 0.98;
+    color: var(--ink);
+    letter-spacing: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.mrd-hero h1 svg {
+    width: 0.55em;
+    height: 0.55em;
+    color: var(--copper);
+    flex: 0 0 auto;
+}
+
+.mrd-hero p {
+    margin: 0;
+    color: #565e6f;
+    font-size: 1.03rem;
+    line-height: 1.65;
+}
+
+.mrd-hero-illustration {
+    position: absolute;
+    right: -1.5rem;
+    top: -0.6rem;
+    width: 420px;
+    height: 220px;
+    max-width: 40vw;
+    pointer-events: none;
+    z-index: 0;
+    -webkit-mask-image: radial-gradient(ellipse 72% 78% at 68% 42%, black 40%, transparent 88%);
+    mask-image: radial-gradient(ellipse 72% 78% at 68% 42%, black 40%, transparent 88%);
+}
+
+.mrd-hero-illustration svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+@media (max-width: 1100px) {
+    .mrd-hero-illustration {
+        display: none;
+    }
+}
+
+/* ============================= FORM ============================= */
+
+[data-testid="stForm"] {
+    padding: 1.4rem 1.5rem 1.25rem;
+    border: 1px solid rgba(173, 100, 52, 0.2);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 254, 250, 0.96), rgba(255, 251, 245, 0.92)),
+        var(--surface);
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+.mrd-form-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.mrd-form-head-lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.mrd-form-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: var(--copper-soft);
+    color: var(--copper);
+    flex: 0 0 auto;
+}
+
+.mrd-form-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.mrd-form-head h2 {
+    margin: 0;
+    font-family: var(--display);
+    font-size: 1.65rem;
+    color: var(--ink);
+}
+
+.mrd-form-head p {
+    max-width: 480px;
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+.stTextInput label {
+    font-weight: 700 !important;
+    color: var(--ink) !important;
+}
+
+.stTextInput input {
+    min-height: 48px;
+    border: 1px solid var(--line) !important;
+    border-radius: 7px !important;
+    background: #fffefa !important;
+    color: var(--ink) !important;
+    font-family: var(--sans) !important;
+    font-size: 0.96rem !important;
+    box-shadow: var(--shadow-field) !important;
+    transition: box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.stTextInput input:focus {
+    border-color: var(--copper) !important;
+    box-shadow: var(--shadow-field-focus) !important;
+}
+
+/* ------ Source pills (checkboxes styled as filter pills) ------ */
+
+.stCheckbox {
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 254, 250, 0.75);
+    box-shadow: var(--shadow-field);
+    transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+}
+
+.stCheckbox label {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.55rem !important;
+    cursor: pointer;
+    font-weight: 700 !important;
+    color: var(--ink) !important;
+}
+
+.stCheckbox p {
+    margin: 0;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--muted);
+    transition: color 0.16s ease;
+    white-space: nowrap;
+}
+
+.stCheckbox label > :last-child {
+    align-self: center !important;
+    margin: 0 !important;
+}
+
+.stCheckbox [data-testid="stWidgetLabel"] {
+    min-height: auto;
+    margin: 0 !important;
+}
+
+.stCheckbox:hover {
+    border-color: rgba(173, 100, 52, 0.38);
+    background: rgba(255, 251, 245, 0.96);
+    box-shadow: 0 5px 12px rgba(57, 42, 28, 0.05);
+}
+
+.stCheckbox label,
+.stCheckbox p {
+    user-select: none !important;
+}
+
+/* Whole pill lights up when its checkbox is checked - not just the glyph. */
+.stCheckbox:has(input:checked) {
+    background: var(--copper-soft);
+    border-color: rgba(173, 100, 52, 0.35);
+}
+
+.stCheckbox:has(input:checked) p {
+    color: var(--ink);
+}
+
+/* The checkbox glyph is the first element inside the label - a <span> in
+   current Streamlit versions, but this only depends on position (first
+   child), not a specific tag, so it keeps matching if Streamlit changes
+   that internal tag again later. */
+.stCheckbox label > :first-child {
+    position: relative;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 0 0 auto;
+    align-self: center !important;
+    border: 1.5px solid rgba(173, 100, 52, 0.52) !important;
+    border-radius: 5px !important;
+    background: #fffefa !important;
+    box-shadow: none !important;
+    overflow: hidden;
+    transition: background 0.14s ease, border-color 0.14s ease;
+}
+
+.stCheckbox label > :first-child > * {
+    position: absolute;
+    inset: 0;
+}
+
+.stCheckbox label:has(input:checked) > :first-child {
+    background: var(--copper) !important;
+    border-color: var(--copper) !important;
+}
+
+/* Checkmark drawn with an inline SVG (pixel-exact) instead of a unicode
+   glyph, which renders off-center depending on the font. */
+.stCheckbox label > :first-child::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.stCheckbox label:has(input:checked) > :first-child::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23fffefa' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3.6 8.4 6.6 11.4 12.6 4.6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 11px 11px;
+}
+
+.stCheckbox input[type="checkbox"] {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.stFormSubmitButton > button:disabled,
+.stButton > button:disabled,
+.stDownloadButton > button:disabled {
+    opacity: 1 !important;
+    color: #fffefa !important;
+    -webkit-text-fill-color: #fffefa !important;
+    background: linear-gradient(135deg, #182746, #0d1932) !important;
+    cursor: not-allowed !important;
+}
+
+.stButton > button,
+.stFormSubmitButton > button,
+.stDownloadButton > button {
+    min-height: 48px;
+    border: 1px solid rgba(57, 42, 28, 0.1) !important;
+    border-radius: 7px !important;
+    background: linear-gradient(135deg, #c17a43, #ad6434) !important;
+    color: #fffefa !important;
+    font-family: var(--sans) !important;
+    font-size: 0.94rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.01em !important;
+    box-shadow: var(--shadow-button) !important;
+    transition: box-shadow 0.16s ease, transform 0.16s ease, background 0.16s ease;
+}
+
+.stButton > button:hover,
+.stFormSubmitButton > button:hover,
+.stDownloadButton > button:hover {
+    background: linear-gradient(135deg, #cb8650, #b76f3c) !important;
+    color: #fffefa !important;
+    box-shadow: var(--shadow-button-hover) !important;
+    transform: translateY(-1px);
+}
+
+[data-testid="stForm"] .stFormSubmitButton {
+    margin-top: 1.75rem;
+}
+
+.mrd-section-label {
+    margin: 0.9rem 0 0.55rem;
+    color: var(--copper);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+/* ============================= PREVIEW CARDS ============================= */
+
+.mrd-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.mrd-preview-card {
+    position: relative;
+    padding: 1.25rem;
+    border: 1px solid rgba(173, 100, 52, 0.18);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 254, 250, 0.96), rgba(255, 251, 245, 0.9)),
+        var(--surface);
+    box-shadow: var(--shadow);
+    transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.mrd-preview-card:hover {
+    border-color: rgba(173, 100, 52, 0.3);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
+}
+
+.mrd-preview-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 1rem;
+    border-radius: 999px;
+    background: var(--sage-soft);
+    color: var(--sage);
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.mrd-preview-card h3 {
+    margin: 0.35rem 0 0.45rem;
+    font-family: var(--display);
+    color: var(--ink);
+    font-size: 1.25rem;
+    line-height: 1.18;
+}
+
+.mrd-preview-card p {
+    margin: 0;
+    color: #4d5563;
+    font-size: 0.94rem;
+    line-height: 1.55;
+}
+
+/* ============================= BOTTOM FILTER TABS ============================= */
+
+.mrd-bottom-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border: 1px solid rgba(173, 100, 52, 0.14);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 250, 243, 0.85), rgba(249, 240, 229, 0.65));
+    width: fit-content;
+}
+
+.mrd-bottom-tab {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--muted);
+    padding: 0.55rem 1.05rem;
+    border-radius: 999px;
+}
+
+.mrd-bottom-tab.active {
+    background: var(--copper-soft);
+    color: var(--copper);
+}
+
+/* ============================= STEPS / PROGRESS ============================= */
+
+.mrd-progress-card {
+    padding: 1.25rem;
+    border: 1px solid rgba(173, 100, 52, 0.18);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 254, 250, 0.96), rgba(255, 251, 245, 0.9)),
+        var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.mrd-step {
+    display: flex;
+    align-items: center;
+    gap: 0.72rem;
+    padding: 0.65rem 0;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.mrd-step span {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--line);
+}
+
+.mrd-step.active {
+    color: var(--copper);
+}
+
+.mrd-step.active span {
+    background: var(--copper);
+    box-shadow: 0 0 0 5px var(--copper-soft);
+}
+
+.mrd-step.done {
+    color: var(--sage);
+}
+
+.mrd-step.done span {
+    background: var(--sage);
+}
+
+/* ============================= REPORT VIEW ============================= */
+
+.mrd-report-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1.35rem 1.4rem;
+    border: 1px solid rgba(173, 100, 52, 0.2);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 254, 250, 0.96), rgba(255, 251, 245, 0.92)),
+        var(--surface);
+    box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+}
+
+.mrd-card-kicker {
+    color: var(--copper);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.mrd-report-head h2 {
+    margin: 0.22rem 0 0;
+    font-family: var(--display);
+    color: var(--ink);
+    font-size: 1.75rem;
+    line-height: 1.15;
+}
+
+.mrd-report-head span {
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.mrd-metric {
+    height: 100%;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid rgba(173, 100, 52, 0.18);
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(255, 254, 250, 0.95), rgba(255, 251, 245, 0.86));
+    box-shadow: 0 8px 20px rgba(84, 65, 42, 0.035);
+}
+
+.mrd-metric strong {
+    display: block;
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: 1.45rem;
+}
+
+.mrd-metric span {
+    display: block;
+    margin-top: 0.22rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.stTabs [data-baseweb="tab"] {
+    padding: 0.7rem 0.05rem;
+}
+
+.stTabs [data-baseweb="tab"] p {
+    color: var(--muted);
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 0.88rem;
+}
+
+.stTabs [aria-selected="true"] p {
+    color: var(--ink) !important;
+}
+
+.stTabs [data-baseweb="tab-highlight"] {
+    height: 2px;
+    background: var(--copper) !important;
+}
+
+.mrd-tab-panel {
+    padding: 1.2rem 0.15rem 0.7rem;
+    color: var(--body);
+    font-size: 0.96rem;
+    line-height: 1.72;
+}
+
+.mrd-tab-panel p {
+    margin: 0 0 0.85rem;
+}
+
+.mrd-tab-panel strong {
+    color: var(--ink);
+}
+
+.mrd-tab-panel ul,
+.mrd-tab-panel ol {
+    margin: 0.45rem 0 0.9rem 1.2rem;
+    padding: 0;
+}
+
+.mrd-tab-panel li {
+    margin-bottom: 0.42rem;
+}
+
+.mrd-source {
+    display: inline-block;
+    margin: 0 0.45rem 0.45rem 0;
+    padding: 0.45rem 0.72rem;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.mrd-source:hover {
+    border-color: var(--copper);
+    color: var(--copper);
+}
+
+[data-testid="stAlert"] {
+    border-radius: 8px;
+}
+
+.streamlit-expanderHeader {
+    color: var(--ink) !important;
+    font-weight: 700 !important;
+}
+
+@media (max-width: 900px) {
+    .block-container {
+        padding-top: 1.5rem;
+    }
+
+    .mrd-form-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .mrd-preview-grid {
+        grid-template-columns: 1fr;
+    }
+}
