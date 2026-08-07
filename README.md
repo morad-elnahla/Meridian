@@ -1,6 +1,3 @@
-Here's a polished, professional version — added badges, a features section, tech-stack table, troubleshooting, and tightened up the structure. Pasting the code, not creating a file, like last time:
-
-```markdown
 # 🧭 Meridian — Agentic Business Research Analyst
 
 <p align="center">
@@ -82,15 +79,15 @@ Investment, consulting, and procurement teams routinely need a fast first pass o
 
 ## Tech stack
 
-| Layer          | Technology                                | Purpose                                  |
-|----------------|--------------------------------------------|-------------------------------------------|
-| Orchestration  | LangGraph                                  | Multi-agent state graph                   |
-| LLM            | Groq (`llama-3.3-70b-versatile`)           | Report generation                         |
-| Web search     | Tavily                                     | News & competitor research                |
-| Financial data | yfinance                                   | Live market/financial snapshot            |
-| RAG            | ChromaDB + sentence-transformers           | Grounding report content in real sources  |
-| UI             | Streamlit                                  | Front end                                 |
-| Export         | Markdown / PDF                             | Shareable deliverables                    |
+| Layer          | Technology                                | Purpose                                    |
+|----------------|--------------------------------------------|---------------------------------------------|
+| Orchestration  | LangGraph                                  | Multi-agent state graph                      |
+| LLM            | Groq (`llama-3.3-70b-versatile`)           | Report generation                            |
+| Web search     | Tavily                                     | News & competitor research                   |
+| Financial data | yfinance                                   | Live market/financial snapshot               |
+| RAG            | ChromaDB + sentence-transformers           | Grounding report content in real sources     |
+| UI             | Streamlit                                  | Front end                                    |
+| Export         | Markdown / PDF                             | Shareable deliverables                       |
 
 ## Project structure
 
@@ -125,8 +122,8 @@ biz-research-analyst/
 **1. Clone and create a virtual environment**
 
 ```bash
-git clone <your-repo-url>
-cd biz-research-analyst
+git clone https://github.com/morad-elnahla/Meridian.git
+cd Meridian
 python -m venv venv
 source venv/bin/activate      # Windows: venv\Scripts\activate
 pip install -r requirements.txt
@@ -140,10 +137,10 @@ cp .env.example .env
 
 Then open `.env` and fill in:
 
-| Key              | Where to get it                          | Free tier? |
-|-------------------|-------------------------------------------|------------|
-| `GROQ_API_KEY`    | https://console.groq.com                  | ✅ Yes      |
-| `TAVILY_API_KEY`  | https://tavily.com                        | ✅ Yes      |
+| Key               | Where to get it            | Free tier? |
+|--------------------|------------------------------|:----------:|
+| `GROQ_API_KEY`     | https://console.groq.com     | ✅          |
+| `TAVILY_API_KEY`   | https://tavily.com           | ✅          |
 
 **3. Run the app**
 
@@ -178,14 +175,13 @@ Enter a company name (e.g. `Tesla`) with its ticker (`TSLA`) and click **Generat
 
 ## Troubleshooting
 
-| Problem | Likely cause | Fix |
-|---|---|---|
-| `GROQ_API_KEY not found` | `.env` missing or not filled in | Run `cp .env.example .env` and add your key |
-| Empty / partial financial section | Invalid or missing ticker | Double-check the ticker symbol on Yahoo Finance |
-| Report has few citations | Tavily rate limit hit | Wait a minute and re-run, or check your Tavily usage dashboard |
-| `ModuleNotFoundError` on launch | Virtual env not activated | Re-run `source venv/bin/activate` before `streamlit run app.py` |
+| Problem                              | Likely cause                     | Fix                                                                 |
+|----------------------------------------|-----------------------------------|------------------------------------------------------------------------|
+| `GROQ_API_KEY not found`               | `.env` missing or not filled in   | Run `cp .env.example .env` and add your key                            |
+| Empty / partial financial section      | Invalid or missing ticker         | Double-check the ticker symbol on Yahoo Finance                        |
+| Report has few citations               | Tavily rate limit hit             | Wait a minute and re-run, or check your Tavily usage dashboard         |
+| `ModuleNotFoundError` on launch        | Virtual env not activated         | Re-run `source venv/bin/activate` (or `venv\Scripts\Activate.ps1`) before `streamlit run app.py` |
 
 ## License
 
 MIT — see `LICENSE` for details.
-```
