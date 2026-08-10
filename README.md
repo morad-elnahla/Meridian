@@ -1,187 +1,236 @@
-# 🧭 Meridian — Agentic Business Research Analyst
+<div align="center">
 
-<p align="center">
-  <em>A multi-agent AI system that turns a company name into a cited, decision-ready research brief — in seconds, not hours.</em>
-</p>
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Syne&weight=750&size=36&pause=1000&color=AD6434&center=true&vCenter=true&width=700&lines=Meridian+%F0%9F%A7%AD;Agentic+Business+Research+Analyst;LangGraph+%C2%B7+RAG+%C2%B7+Live+Monitoring)](https://git.io/typing-svg)
 
-<p align="center">
-  <img alt="Python" src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white">
-  <img alt="Streamlit" src="https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white">
-  <img alt="LangGraph" src="https://img.shields.io/badge/Orchestration-LangGraph-1C3C3C">
-  <img alt="Groq" src="https://img.shields.io/badge/LLM-Groq%20Llama%203.3-F55036">
-  <img alt="ChromaDB" src="https://img.shields.io/badge/Vector%20DB-ChromaDB-6A3DE8">
-  <img alt="License" src="https://img.shields.io/badge/License-MIT-green">
-</p>
+[![Python](https://img.shields.io/badge/Python-3.10+-AD6434?style=for-the-badge&logo=python&logoColor=white&labelColor=1e2327)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Live-AD6434?style=for-the-badge&logo=streamlit&logoColor=white&labelColor=1e2327)](https://streamlit.io)
+[![LangGraph](https://img.shields.io/badge/LangGraph-Orchestration-AD6434?style=for-the-badge&labelColor=1e2327)](https://github.com/langchain-ai/langgraph)
+[![Groq](https://img.shields.io/badge/Groq-LLM-AD6434?style=for-the-badge&logo=groq&logoColor=white&labelColor=1e2327)](https://groq.com)
+[![ChromaDB](https://img.shields.io/badge/ChromaDB-RAG-AD6434?style=for-the-badge&labelColor=1e2327)](https://www.trychroma.com)
+[![License](https://img.shields.io/badge/License-MIT-AD6434?style=for-the-badge&labelColor=1e2327)](#-license)
 
----
+> **Give it a company name. Get back a cited research brief — recent news, financial snapshot, and competitive landscape — in seconds, not hours.**
+> **+ a live Monitoring page tracking wall-clock time and LLM cost for every agent, every run.**
 
-## Table of contents
+| 🕸️ Orchestration | ⚡ LLM | 🔎 Search | 📈 Financial Data | 📚 RAG | 📊 Monitoring |
+|:-----------------:|:------:|:---------:|:------------------:|:------:|:--------------:|
+| **LangGraph** | **Groq · Llama 3.3 70B** | **Tavily** | **yfinance (live)** | **ChromaDB + sentence-transformers** | **Time + cost per agent** |
 
-- [Why this project](#why-this-project)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Tech stack](#tech-stack)
-- [Project structure](#project-structure)
-- [Setup](#setup)
-- [Usage](#usage)
-- [Design notes](#design-notes)
-- [Roadmap](#roadmap)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
+**[🚀 Try the Live App →](https://meridian-com.streamlit.app)**
+
+</div>
 
 ---
 
-## Why this project
+## ✦ App Preview
 
-Investment, consulting, and procurement teams routinely need a fast first pass on a company before a call, a deal, or a pitch. Meridian automates that first pass: it researches, cross-checks the findings against a local knowledge base (RAG), and writes a cited, decision-ready report — recent news, financial snapshot, and competitive landscape — the way a junior analyst would.
+### 🖥️ Research Desk
+<p align="center">
+  <img src="assets/screenshots/research-desk.png" width="95%">
+</p>
 
-## Features
+### 📊 Monitoring — Time & Cost per Agent
+<p align="center">
+  <img src="assets/screenshots/monitoring.png" width="95%">
+</p>
 
-- 🔍 **Multi-agent research** — dedicated agents for news, financials, and competitors, orchestrated as a LangGraph state graph
-- 📚 **Grounded in real sources (RAG)** — every snippet the agents collect is embedded into ChromaDB before the report is written, so nothing is hallucinated from thin air
-- 📈 **Live financial data** — pulled directly from Yahoo Finance via `yfinance`
-- 🧠 **Fast inference** — Groq's `llama-3.3-70b-versatile` for low-latency report generation
-- 📄 **Export-ready** — one click to Markdown or PDF
-- 🛡️ **Graceful degradation** — a missing ticker or a rate-limited API doesn't crash the run; gaps are surfaced in the report instead of hidden
-- 🖥️ **Clean, branded UI** — custom Streamlit stylesheet, no default Streamlit look
+*(drop your own screenshots into `assets/screenshots/` and update the paths above)*
 
-## Architecture
+---
 
-```
-                 ┌────────────────┐
-   company name  │   LangGraph    │
-   + ticker  ───▶│  Orchestrator  │
-                 └───────┬────────┘
-                         │
-        ┌────────────────┼─────────────────┐
-        ▼                ▼                 ▼
-  Research Agent   Financial Agent   Competitor Agent
-  (Tavily search)  (yfinance)        (Tavily search)
-        │                │                 │
-        └────────────────┼─────────────────┘
-                         ▼
-                 Chroma Vector Store  (RAG)
-                         │
-                         ▼
-                 Report Writer Agent
-                 (retrieves + synthesizes)
-                         │
-                         ▼
-                 Final Markdown Report
-                 (+ PDF / Markdown export)
-```
+## ✦ What is This?
 
-- **Orchestration:** [LangGraph](https://github.com/langchain-ai/langgraph) — a directed state graph where each agent is a node and a shared `ResearchState` object is passed between them.
-- **RAG / Vector DB:** [ChromaDB](https://www.trychroma.com/), running fully locally with `sentence-transformers` embeddings — no extra API key needed. Every snippet the agents collect is embedded and stored; the Report Writer retrieves the most relevant chunks before writing each section, so the final report stays grounded in real sources.
-- **Tool calling:** Tavily (web search) and yfinance (market data), wrapped as clean tool classes in `src/tools/`.
-- **LLM:** Groq (`llama-3.3-70b-versatile` by default) via `langchain-groq`.
-- **UI:** Streamlit, with a small custom stylesheet for a clean, branded look.
+Investment, consulting, and procurement teams routinely need a fast first pass on a company before a call, a deal, or a pitch — normally that means a junior analyst spending an afternoon stitching together news, financials, and competitor context.
 
-## Tech stack
+**Meridian automates that first pass.** Give it a company name (and optionally a ticker), and three specialized agents research it in parallel-ready fashion: recent news and strategy, live financial metrics, and the competitive landscape. Everything they find is embedded into a local vector store, so the final Report Writer agent doesn't just summarize — it *retrieves* the most relevant evidence for each section before writing, keeping the report grounded in real, citable sources instead of the model's own memory.
 
-| Layer          | Technology                                | Purpose                                    |
-|----------------|--------------------------------------------|---------------------------------------------|
-| Orchestration  | LangGraph                                  | Multi-agent state graph                      |
-| LLM            | Groq (`llama-3.3-70b-versatile`)           | Report generation                            |
-| Web search     | Tavily                                     | News & competitor research                   |
-| Financial data | yfinance                                   | Live market/financial snapshot               |
-| RAG            | ChromaDB + sentence-transformers           | Grounding report content in real sources     |
-| UI             | Streamlit                                  | Front end                                    |
-| Export         | Markdown / PDF                             | Shareable deliverables                       |
+A built-in **Monitoring page** makes the pipeline's cost and latency visible instead of a black box: exactly how long each agent took, how many tokens it used, and what that run cost in USD.
 
-## Project structure
+---
+
+## ✦ Project Structure
 
 ```
-biz-research-analyst/
-├── app.py                     # Streamlit UI entry point
-├── config.py                  # All settings, paths, API keys in one place
+meridian/
+├── app.py                       ← Streamlit UI (Research Desk + Monitoring pages)
+├── config.py                    ← API keys, model settings, paths, Groq pricing
 ├── requirements.txt
 ├── .env.example
+│
 ├── src/
-│   ├── state.py                 # Shared LangGraph state schema
-│   ├── graph.py                 # Builds and runs the LangGraph pipeline
+│   ├── state.py                    ← Shared LangGraph state (incl. timings/cost fields)
+│   ├── graph.py                    ← Builds and runs the LangGraph pipeline
 │   ├── agents/
-│   │   ├── research_agent.py
-│   │   ├── financial_agent.py
-│   │   ├── competitor_agent.py
-│   │   └── report_writer_agent.py
+│   │   ├── research_agent.py          ← Recent news & strategy (Tavily)
+│   │   ├── financial_agent.py         ← Live financial snapshot (yfinance)
+│   │   ├── competitor_agent.py        ← Competitive landscape (Tavily)
+│   │   └── report_writer_agent.py     ← RAG retrieval + final cited report
 │   ├── tools/
-│   │   ├── web_search_tool.py   # Tavily wrapper
-│   │   └── financial_tool.py    # yfinance wrapper
+│   │   ├── web_search_tool.py         ← Tavily wrapper
+│   │   └── financial_tool.py          ← yfinance wrapper
 │   ├── rag/
-│   │   └── vector_store.py      # Chroma wrapper (embed/store/retrieve)
+│   │   └── vector_store.py            ← Chroma wrapper (embed / store / retrieve)
 │   └── utils/
-│       ├── llm_client.py        # Shared Groq client builder
-│       └── export.py            # Markdown / PDF export
+│       ├── llm_client.py              ← Shared Groq client builder
+│       ├── monitoring.py              ← Per-agent time + token/cost tracking
+│       └── export.py                  ← Markdown / PDF export
+│
 └── assets/
-    └── style.css                 # Brand stylesheet for Streamlit
+    ├── style.css                 ← Brand stylesheet (paper/copper/sage palette)
+    └── back.png                  ← Site background image
 ```
 
-## Setup
+---
 
-**1. Clone and create a virtual environment**
+## ✦ How the Pipeline Works
+
+| Step | What Happens |
+|:-----|:-------------|
+| **1. Research** | Searches recent news, announcements, and strategic moves via Tavily; embeds every snippet into the session's vector store |
+| **2. Financials** | Pulls live market data via `yfinance` if a ticker is provided — degrades gracefully if not |
+| **3. Competitors** | Searches for market positioning and rivals; runs independently, never blocked by a missing ticker |
+| **4. Report Writer** | Queries the vector store per section (news / financial / competitor), retrieves the most relevant grounded evidence, and writes the final cited Markdown report |
+| **5. Monitor** | Every LLM call and every node's wall-clock time is logged onto the run's state as it happens |
+
+Research, Financials, and Competitors only depend on the original company name/ticker — not on each other — so the graph is structured to make parallelizing them a small change (see Roadmap).
+
+---
+
+## ✦ Tools & RAG
+
+| Component | Purpose |
+|:----------|:--------|
+| `WebSearchTool` (Tavily) | Clean, LLM-ready web snippets for news & competitor research |
+| `FinancialDataTool` (yfinance) | Live price, market cap, P/E, margins, growth — no paid key needed |
+| `ResearchVectorStore` (ChromaDB) | Fresh collection per company; local `sentence-transformers` embeddings, no API key, works even if Groq/Tavily quotas run out |
+| Report Writer retrieval | Semantic search over everything the earlier agents collected, so the final report cites real retrieved evidence instead of the model's memory |
+
+---
+
+## ✦ Monitoring — Time & Cost, Per Agent
+
+Every run tracks two things per node (`research` / `financials` / `competitors` / `report_writer`):
+
+- **Wall-clock time** — where the run is actually spending its seconds
+- **Token usage + estimated USD cost** — pulled from the LLM response's usage metadata, priced against `config.py`'s per-model Groq rates
+
+| Metric | Where it shows |
+|:-------|:----------------|
+| Total run time & total cost | Top summary cards on the Monitoring page |
+| Per-agent time (with progress bar) | Breakdown table |
+| Per-agent tokens (in → out) | Breakdown table |
+| Per-agent estimated cost | Breakdown table |
+
+Nothing is persisted between sessions — it reflects the most recent run in the current browser session. No external tracing service or extra API key required.
+
+---
+
+## ✦ Tech Stack
+
+| Layer | Technology |
+|:------|:-----------|
+| 🐍 Language | Python 3.10+ |
+| 🕸️ Orchestration | LangGraph (state graph, one node per agent) |
+| ⚡ LLM | Groq — `llama-3.3-70b-versatile` |
+| 🔎 Web search | Tavily |
+| 📈 Financial data | yfinance |
+| 📚 RAG / Vector DB | ChromaDB + `sentence-transformers` (local, offline) |
+| 🎛️ UI | Streamlit, custom stylesheet, no default Streamlit look |
+| 📊 Monitoring | Custom lightweight time + cost tracker (no external service) |
+| 📄 Export | Markdown / PDF |
+
+---
+
+## ✦ Quick Start
 
 ```bash
+# 1. Clone the repo
 git clone https://github.com/morad-elnahla/Meridian.git
 cd Meridian
+
+# 2. Create a virtual environment
 python -m venv venv
 source venv/bin/activate      # Windows: venv\Scripts\activate
+
+# 3. Install dependencies
 pip install -r requirements.txt
-```
 
-**2. Add your API keys**
-
-```bash
+# 4. Add your API keys
 cp .env.example .env
 ```
 
 Then open `.env` and fill in:
 
-| Key               | Where to get it            | Free tier? |
-|--------------------|------------------------------|:----------:|
-| `GROQ_API_KEY`     | https://console.groq.com     | ✅          |
-| `TAVILY_API_KEY`   | https://tavily.com           | ✅          |
-
-**3. Run the app**
+| Key | Where to get it | Free tier? |
+|:----|:-----------------|:----------:|
+| `GROQ_API_KEY` | <https://console.groq.com> | ✅ |
+| `TAVILY_API_KEY` | <https://tavily.com> | ✅ |
 
 ```bash
+# 5. Run
 streamlit run app.py
 ```
 
-The app opens at `http://localhost:8501`.
+App opens at `http://localhost:8501`.
 
-## Usage
+---
 
-Enter a company name (e.g. `Tesla`) with its ticker (`TSLA`) and click **Generate brief**. Meridian will:
+## ✦ Deploy to Streamlit Cloud
 
-1. Research recent news via Tavily
-2. Pull live financials via yfinance
-3. Map the competitive landscape against peers
-4. Embed everything into a fresh ChromaDB collection
-5. Generate a cited report you can export as Markdown or PDF
+```
+1. Push the repo to GitHub
+2. Go to share.streamlit.io
+3. Connect the repo → main file: app.py → Deploy
+4. In app Settings → Secrets, add GROQ_API_KEY and TAVILY_API_KEY
+```
 
-## Design notes
+Note: Streamlit Community Cloud's filesystem is ephemeral, so the vector store resets on redeploy/sleep — by design, since each analysis creates a fresh collection anyway.
 
-- **Sequential graph, parallel-ready.** Research, Financial, and Competitor agents don't depend on each other's output, only on the original input — the graph runs them sequentially for clearer live progress in the UI, but the structure in `src/graph.py` makes it straightforward to branch them in parallel later.
-- **Graceful degradation.** If a ticker isn't provided, or Tavily/Groq rate limits are hit, each agent still returns a usable (if partial) result instead of crashing the whole pipeline — gaps are surfaced to the user instead of hidden.
-- **Fresh vector store per session.** Each analysis creates its own Chroma collection (named after the company) so results from different runs never mix.
+---
 
-## Roadmap
+## ✦ Design Notes
+
+- **Sequential graph, parallel-ready.** Research / Financial / Competitor agents don't depend on each other's output — only on the original input. The graph runs them sequentially today for clearer live progress in the UI; the structure makes branching them in parallel a small change.
+- **Graceful degradation.** A missing ticker or a rate-limited API doesn't crash the run — gaps are surfaced in the report instead of hidden.
+- **Fresh vector store per session.** Each analysis creates its own Chroma collection so results from different companies never mix.
+- **Cost estimates, not billed usage.** Monitoring numbers are computed from token counts × the rates in `config.py` — update those rates if Groq's pricing changes.
+
+---
+
+## ✦ Roadmap
 
 - [ ] Parallelize the Research / Financial / Competitor agents
+- [ ] Retry/backoff on Tavily and Groq rate limits instead of failing silently
+- [ ] Faithfulness check — verify report claims against retrieved evidence before returning it
+- [ ] Structured (Pydantic) agent outputs instead of free-text summaries
 - [ ] Multi-company comparison reports
-- [ ] Persistent report history / saved briefs
+- [ ] Persistent report history across sessions
 - [ ] Configurable LLM provider (OpenAI / Anthropic as alternatives to Groq)
 
-## Troubleshooting
+---
 
-| Problem                              | Likely cause                     | Fix                                                                 |
-|----------------------------------------|-----------------------------------|------------------------------------------------------------------------|
-| `GROQ_API_KEY not found`               | `.env` missing or not filled in   | Run `cp .env.example .env` and add your key                            |
-| Empty / partial financial section      | Invalid or missing ticker         | Double-check the ticker symbol on Yahoo Finance                        |
-| Report has few citations               | Tavily rate limit hit             | Wait a minute and re-run, or check your Tavily usage dashboard         |
-| `ModuleNotFoundError` on launch        | Virtual env not activated         | Re-run `source venv/bin/activate` (or `venv\Scripts\Activate.ps1`) before `streamlit run app.py` |
+## ✦ Troubleshooting
 
-## License
+| Problem | Likely cause | Fix |
+|:--------|:--------------|:----|
+| `GROQ_API_KEY not found` | `.env` missing or not filled in | Run `cp .env.example .env` and add your key |
+| Empty / partial financial section | Invalid or missing ticker | Double-check the ticker symbol on Yahoo Finance |
+| Report has few citations | Tavily rate limit hit | Wait a minute and re-run, or check your Tavily usage dashboard |
+| Monitoring page shows 0 tokens | LLM response usage field not recognized | Check the response object shape against `src/utils/monitoring.py`'s `_extract_usage` |
+| `ModuleNotFoundError` on launch | Virtual env not activated | Re-run `source venv/bin/activate` before `streamlit run app.py` |
+
+---
+
+## ✦ License
 
 MIT — see `LICENSE` for details.
+
+---
+
+<div align="center">
+
+Built by **[Morad Elnahla](https://github.com/morad-elnahla)**
+
+*Meridian — ياخد اسم شركة، ويرجّعلك بحث موثّق في ثواني، مش ساعات.*
+
+</div>

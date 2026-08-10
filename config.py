@@ -43,6 +43,15 @@ MAX_SEARCH_RESULTS = 6          # How many web results the Research agent pulls
 MAX_COMPETITOR_RESULTS = 5      # How many competitor mentions to pull
 VECTOR_STORE_TOP_K = 4          # How many chunks the Report Writer retrieves per query
 
+# --- Cost monitoring -----------------------------------------------------
+# Groq's public per-token rate for GROQ_MODEL, used by src/utils/monitoring.py
+# to turn token counts into an estimated USD cost. Confirmed current as of
+# Aug 2026 for llama-3.3-70b-versatile: $0.59 / $0.79 per 1M tokens.
+# If you switch GROQ_MODEL, update these two values to match — Groq prices
+# each model differently (e.g. llama-3.1-8b-instant is $0.05 / $0.08).
+GROQ_PRICE_PER_M_INPUT_TOKENS = 0.59   # USD per 1,000,000 input tokens
+GROQ_PRICE_PER_M_OUTPUT_TOKENS = 0.79  # USD per 1,000,000 output tokens
+
 
 def validate_keys() -> list[str]:
     """
@@ -56,3 +65,4 @@ def validate_keys() -> list[str]:
     if not TAVILY_API_KEY or TAVILY_API_KEY == "your_tavily_api_key_here":
         warnings.append("TAVILY_API_KEY is missing — the Research agent will not be able to search the web.")
     return warnings
+

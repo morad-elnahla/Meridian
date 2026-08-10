@@ -13,6 +13,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from src.state import ResearchState
 from src.tools.financial_tool import FinancialDataTool
 from src.utils.llm_client import get_llm
+from src.utils.monitoring import track_llm_call, track_node_time
 
 SYSTEM_PROMPT = """You are a financial analyst. Given a set of raw
 financial metrics for a company, write a concise (100-180 words) plain
@@ -30,42 +31,47 @@ def financial_agent(state: ResearchState, vector_store) -> ResearchState:
     state["current_step"] = "analyzing_financials"
     ticker = state.get("ticker")
 
-    if not ticker:
-        state["financial_summary"] = (
-            "No stock ticker was provided, so live financial data could not "
-            "be retrieved for this company."
+    with track_node_time(state, "financials"):
+        if not ticker:
+            state["financial_summary"] = (
+                "No stock ticker was provided, so live financial data could not "
+                "be retrieved for this company."
+            )
+            state["financial_metrics"] = {}
+            return state
+
+        fin_tool = FinancialDataTool()
+        metrics = fin_tool.get_metrics(ticker)
+
+        if not metrics:
+            state["financial_summary"] = (
+                f"No financial data was found for ticker '{ticker}'. It may be "
+                "delisted, private, or the ticker symbol may be incorrect."
+            )
+            state["financial_metrics"] = {}
+            state.setdefault("errors", []).append(f"Financial agent: no data for ticker '{ticker}'.")
+            return state
+
+        # Push a text version of the metrics into the vector store too, so the
+        # Report Writer can retrieve financial context alongside news context.
+        metrics_text = "\n".join(f"{k}: {v}" for k, v in metrics.items() if v is not None)
+        vector_store.add_documents(
+            texts=[metrics_text],
+            metadatas=[{"title": f"{ticker} financial snapshot", "url": "", "source": "financial"}],
         )
-        state["financial_metrics"] = {}
-        return state
 
-    fin_tool = FinancialDataTool()
-    metrics = fin_tool.get_metrics(ticker)
-
-    if not metrics:
-        state["financial_summary"] = (
-            f"No financial data was found for ticker '{ticker}'. It may be "
-            "delisted, private, or the ticker symbol may be incorrect."
+        llm = get_llm()
+        response = track_llm_call(
+            llm,
+            [
+                SystemMessage(content=SYSTEM_PROMPT),
+                HumanMessage(content=f"Ticker: {ticker}\n\nRaw metrics:\n{metrics_text}"),
+            ],
+            state,
+            "financials",
         )
-        state["financial_metrics"] = {}
-        state.setdefault("errors", []).append(f"Financial agent: no data for ticker '{ticker}'.")
-        return state
 
-    # Push a text version of the metrics into the vector store too, so the
-    # Report Writer can retrieve financial context alongside news context.
-    metrics_text = "\n".join(f"{k}: {v}" for k, v in metrics.items() if v is not None)
-    vector_store.add_documents(
-        texts=[metrics_text],
-        metadatas=[{"title": f"{ticker} financial snapshot", "url": "", "source": "financial"}],
-    )
+        state["financial_summary"] = response.content
+        state["financial_metrics"] = metrics
 
-    llm = get_llm()
-    response = llm.invoke(
-        [
-            SystemMessage(content=SYSTEM_PROMPT),
-            HumanMessage(content=f"Ticker: {ticker}\n\nRaw metrics:\n{metrics_text}"),
-        ]
-    )
-
-    state["financial_summary"] = response.content
-    state["financial_metrics"] = metrics
     return state

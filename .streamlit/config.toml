@@ -1,0 +1,9 @@
+[server]
+enableStaticServing = true
+
+[theme]
+base = "light"
+
+[client]
+showErrorDetails = "full"
+

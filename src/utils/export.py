@@ -40,8 +40,34 @@ def save_pdf(company_name: str, report_text: str) -> str:
     pdf.cell(0, 8, f"Generated {datetime.now().strftime('%Y-%m-%d %H:%M')}", new_x="LMARGIN", new_y="NEXT")
     pdf.ln(4)
 
+    # The built-in "Helvetica" font only supports latin-1 (256 chars). Any
+    # character outside that range - e.g. the euro sign - would crash fpdf2
+    # with FPDFUnicodeEncodingException, so map the common offenders to their
+    # plain ASCII equivalents before rendering. Anything still unsupported
+    # gets silently dropped so the PDF always renders instead of blowing up.
+    _UNICODE_REPLACEMENTS = {
+        "\u20ac": "EUR",   # € euro sign
+        "\u201c": '"',     # left double quote
+        "\u201d": '"',     # right double quote
+        "\u2018": "'",     # left single quote
+        "\u2019": "'",     # right single quote / apostrophe
+        "\u2014": "-",     # em dash
+        "\u2013": "-",     # en dash
+        "\u2026": "...",   # ellipsis
+        "\u2122": "(TM)",  # trademark
+        "\u00a9": "(c)",   # copyright
+        "\u00ae": "(R)",   # registered
+        "\u00b0": "deg",   # degree sign
+    }
+
+    def _sanitize(text: str) -> str:
+        for char, replacement in _UNICODE_REPLACEMENTS.items():
+            text = text.replace(char, replacement)
+        # Drop any remaining character outside latin-1 to be safe.
+        return "".join(ch for ch in text if ord(ch) < 256)
+
     for line in report_text.split("\n"):
-        clean_line = re.sub(r"[*_`#]", "", line).strip()
+        clean_line = _sanitize(re.sub(r"[*_`#]", "", line)).strip()
         if not clean_line:
             pdf.ln(3)
             continue

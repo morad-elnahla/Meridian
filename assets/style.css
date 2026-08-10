@@ -37,12 +37,40 @@
     --sans: "Inter", "Segoe UI", Arial, sans-serif;
 }
 
-.stApp {
-    background:
-        radial-gradient(circle at 18% 8%, rgba(173, 100, 52, 0.08), transparent 28%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(248, 244, 236, 0.96)),
-        var(--paper);
+/* Streamlit nests .stApp inside its own internal containers
+   (data-testid="stAppViewContainer", "stMain", etc.), and depending on
+   version one of THOSE has an opaque background-color from the active
+   theme sitting on top of .stApp - completely hiding anything we put on
+   .stApp alone, with no visible error. So: force every candidate ancestor
+   transparent, and paint the actual photo on the outermost one, all with
+   !important so theme defaults can't win regardless of load order. */
+
+.stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+[data-testid="stHeader"],
+.main {
+    background: transparent !important;
 }
+
+[data-testid="stAppViewContainer"] {
+    background-image: url("/app/static/back.jpg") !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+}
+
+/* NOTE: no "background-attachment: fixed" here on purpose - it silently
+   fails to paint when any ancestor element has a CSS transform (Streamlit's
+   app wrapper often does, for its transition animations), because a
+   transformed ancestor creates a new containing block for fixed-position
+   painting. Plain "scroll" (the default) avoids that trap entirely. */
+
+/* The photo is served by Streamlit's static file server.
+   Required location: static/back.jpg, next to app.py.
+   Required setting in .streamlit/config.toml:
+   [server]
+   enableStaticServing = true */
 
 .block-container {
     max-width: 1120px;
@@ -115,16 +143,17 @@ footer,
     gap: 0.15rem;
 }
 
+.mrd-nav a.mrd-nav-item,
 .mrd-nav-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     padding: 0.62rem 0.75rem;
     border-radius: 7px;
-    color: var(--muted);
+    color: var(--muted) !important;
     font-size: 0.9rem;
     font-weight: 600;
-    text-decoration: none;
+    text-decoration: none !important;
     transition: background 0.15s ease, color 0.15s ease;
 }
 
@@ -134,14 +163,16 @@ footer,
     flex: 0 0 auto;
 }
 
+.mrd-nav a.mrd-nav-item:hover,
 .mrd-nav-item:hover {
     background: rgba(173, 100, 52, 0.07);
-    color: var(--ink);
+    color: var(--ink) !important;
 }
 
+.mrd-nav a.mrd-nav-item.active,
 .mrd-nav-item.active {
     background: var(--copper-soft);
-    color: var(--copper);
+    color: var(--copper) !important;
     font-weight: 700;
 }
 
@@ -208,6 +239,7 @@ footer,
 }
 
 .mrd-hero-illustration {
+    display: none !important;
     position: absolute;
     right: -1.5rem;
     top: -0.6rem;
@@ -763,5 +795,122 @@ footer,
 
     .mrd-preview-grid {
         grid-template-columns: 1fr;
+    }
+}
+/* ============================= MONITORING PAGE ============================= */
+
+.mrd-mon-empty {
+    padding: 2.6rem 1.5rem;
+    text-align: center;
+    border: 1px dashed rgba(173, 100, 52, 0.32);
+    border-radius: 8px;
+    background: rgba(255, 254, 250, 0.62);
+}
+
+.mrd-mon-empty h3 {
+    margin: 0 0 0.4rem;
+    font-family: var(--display);
+    color: var(--ink);
+    font-size: 1.35rem;
+}
+
+.mrd-mon-empty p {
+    margin: 0 auto;
+    max-width: 380px;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.mrd-mon-section {
+    padding: 1.4rem 1.5rem;
+    border: 1px solid rgba(173, 100, 52, 0.18);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 254, 250, 0.96), rgba(255, 251, 245, 0.9)),
+        var(--surface);
+    box-shadow: var(--shadow);
+    margin-bottom: 1.4rem;
+}
+
+.mrd-mon-section-title {
+    margin: 0 0 1rem;
+    font-family: var(--display);
+    color: var(--ink);
+    font-size: 1.2rem;
+}
+
+/* Per-node breakdown rows, built from divs (not a <table>) so each row can
+   carry an inline progress bar without fighting Streamlit's table CSS. */
+
+.mrd-mon-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 90px 110px 90px;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.mrd-mon-row:last-child {
+    border-bottom: none;
+}
+
+.mrd-mon-row.mrd-mon-head {
+    padding-top: 0;
+    padding-bottom: 0.6rem;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.mrd-mon-node-name {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 0.92rem;
+    text-transform: capitalize;
+}
+
+.mrd-mon-bar-track {
+    position: relative;
+    width: 100%;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    overflow: hidden;
+}
+
+.mrd-mon-bar-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #c17a43, #ad6434);
+}
+
+.mrd-mon-bar-fill.cost {
+    background: linear-gradient(90deg, #4a9c73, var(--sage));
+}
+
+.mrd-mon-value {
+    text-align: right;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--body);
+    font-variant-numeric: tabular-nums;
+}
+
+.mrd-mon-value.emph {
+    color: var(--ink);
+}
+
+@media (max-width: 900px) {
+    .mrd-mon-row {
+        grid-template-columns: 100px 1fr 70px;
+    }
+
+    .mrd-mon-row .mrd-mon-tokens {
+        display: none;
     }
 }

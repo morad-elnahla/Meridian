@@ -52,3 +52,9 @@ class ResearchState(TypedDict, total=False):
     # --- Bookkeeping (used by the Streamlit UI to show live progress) ---
     current_step: str          # e.g. "researching", "analyzing_financials"
     errors: List[str]          # any non-fatal errors collected along the way
+
+    # --- Monitoring (time + LLM cost per node) ---
+    timings: dict               # {"research": 3.21, "financials": 1.05, ...} seconds
+    token_usage: dict           # {"research": {"input_tokens": .., "output_tokens": .., "cost_usd": ..}, ...}
+    total_time_s: float         # sum of all node timings for this run
+    total_cost_usd: float       # sum of all node LLM costs for this run
