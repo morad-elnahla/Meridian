@@ -54,7 +54,7 @@
 }
 
 [data-testid="stAppViewContainer"] {
-    background-image: url("/app/static/back.jpg") !important;
+    background-image: url("__BACKGROUND_IMAGE__") !important;
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;

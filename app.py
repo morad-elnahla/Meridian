@@ -7,6 +7,7 @@ Run with:
     streamlit run app.py
 """
 
+import base64
 import html
 import time
 from datetime import datetime
@@ -36,12 +37,21 @@ def render_html(markup: str) -> None:
 def load_stylesheet() -> None:
     base_dir = Path(__file__).resolve().parent
     css_path = base_dir / "assets" / "style.css"
+    bg_path = base_dir / "static" / "back.jpg"
 
     with css_path.open(encoding="utf-8") as css_file:
-        st.markdown(
-            f"<style>{css_file.read()}</style>",
-            unsafe_allow_html=True,
-        )
+        css_text = css_file.read()
+
+    # Embed the background image directly as a base64 data URI instead of
+    # relying on Streamlit's /app/static/ route, which can unreliably fall
+    # back to serving the app shell (text/html) instead of the image on
+    # Streamlit Community Cloud.
+    if bg_path.exists():
+        encoded = base64.b64encode(bg_path.read_bytes()).decode("utf-8")
+        data_uri = f"data:image/jpeg;base64,{encoded}"
+        css_text = css_text.replace("__BACKGROUND_IMAGE__", data_uri)
+
+    st.markdown(f"<style>{css_text}</style>", unsafe_allow_html=True)
 
 
 # --------------------------------------------------------------------------
