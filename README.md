@@ -16,7 +16,9 @@
 |:-----------------:|:------:|:---------:|:------------------:|:------:|:--------------:|
 | **LangGraph** | **Groq · Llama 3.3 70B** | **Tavily** | **yfinance (live)** | **ChromaDB + sentence-transformers** | **Time + cost per agent** |
 
+<!-- Uncomment once the Live App link is confirmed working:
 **[🚀 Try the Live App →](https://meridian-com.streamlit.app)**
+-->
 
 </div>
 
@@ -26,7 +28,7 @@
 
 ### 🖥️ Research Desk
 <p align="center">
-  <img src="image/Research .png" width="95%">
+  <img src="image/Research.png" width="95%">
 </p>
 
 ### 📊 Monitoring — Time & Cost per Agent
@@ -34,7 +36,7 @@
   <img src="image/monitor.png" width="95%">
 </p>
 
-*(drop your own screenshots into `assets/screenshots/` and update the paths above)*
+*(Add your screenshots to `assets/screenshots/` in the repo, then update the two paths above to match your actual filenames.)*
 
 ---
 
@@ -55,6 +57,7 @@ meridian/
 ├── app.py                       ← Streamlit UI (Research Desk + Monitoring pages)
 ├── config.py                    ← API keys, model settings, paths, Groq pricing
 ├── requirements.txt
+├── runtime.txt                  ← Python runtime version for deployment
 ├── .env.example
 │
 ├── src/
@@ -75,9 +78,12 @@ meridian/
 │       ├── monitoring.py              ← Per-agent time + token/cost tracking
 │       └── export.py                  ← Markdown / PDF export
 │
+├── data/                         ← [Describe what this holds, e.g. sample/cache data]
+│
 └── assets/
     ├── style.css                 ← Brand stylesheet (paper/copper/sage palette)
-    └── back.png                  ← Site background image
+    ├── back.png                  ← Site background image
+    └── screenshots/               ← App preview images used in this README
 ```
 
 ---
