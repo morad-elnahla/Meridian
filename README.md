@@ -31,7 +31,7 @@
 
 ### 📊 Monitoring — Time & Cost per Agent
 <p align="center">
-  <img src="image/monitor .png" width="95%">
+  <img src="image/monitor.png" width="95%">
 </p>
 
 *(drop your own screenshots into `assets/screenshots/` and update the paths above)*
