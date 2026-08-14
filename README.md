@@ -28,7 +28,7 @@
 
 ### 🖥️ Research Desk
 <p align="center">
-  <img src="image/Research.png" width="95%">
+  <img src="image/Research .png" width="95%">
 </p>
 
 ### 📊 Monitoring — Time & Cost per Agent
